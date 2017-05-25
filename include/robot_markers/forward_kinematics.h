@@ -20,10 +20,27 @@ class SegmentPair {
   std::string root, tip;
 };
 
+/// \brief Computes forward kinematics for the robot.
+///
+/// Based on code from robot_state_publisher.
 class ForwardKinematics {
  public:
+  /// Constructor.
+  ///
+  /// \param[in] model The URDF model.
   explicit ForwardKinematics(const urdf::Model& model);
+
+  /// Initializes the forward kinematics.
+  ///
+  /// This should be called before calling any other methods.
   void Init();
+
+  /// Outputs the transforms for each set of joint angles passed in.
+  ///
+  /// If a joint is not part of the URDF, then it is skipped.
+  ///
+  /// \param[in] joint_positions The joint angles to query.
+  /// \param[out] transforms The transforms, one for each joint angle.
   void GetTransforms(
       const std::map<std::string, double>& joint_positions,
       std::vector<geometry_msgs::TransformStamped>* transforms) const;

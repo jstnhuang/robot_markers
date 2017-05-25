@@ -64,7 +64,8 @@ Builder::Builder(const urdf::Model& model)
       pose_(),
       color_(),
       lifetime_(0),
-      frame_locked_(false) {
+      frame_locked_(false),
+      has_initialized_(false) {
   pose_.orientation.w = 1;
 }
 
@@ -87,10 +88,18 @@ void Builder::Init() {
                     Transform(pose));
     }
   }
+  has_initialized_ = true;
 }
 
 void Builder::SetJointPositions(
     const std::map<std::string, double> joint_positions) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+
   std::vector<geometry_msgs::TransformStamped> transforms;
   fk_.GetTransforms(joint_positions, &transforms);
   for (size_t i = 0; i < transforms.size(); ++i) {
@@ -102,11 +111,52 @@ void Builder::SetJointPositions(
   }
 }
 
-void Builder::SetFrameId(const std::string& frame_id) { frame_id_ = frame_id; }
-void Builder::SetTime(const ros::Time& stamp) { stamp_ = stamp; }
-void Builder::SetNamespace(const std::string& ns) { ns_ = ns; }
-void Builder::SetPose(const geometry_msgs::Pose& pose) { pose_ = pose; }
+void Builder::SetFrameId(const std::string& frame_id) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+
+  frame_id_ = frame_id;
+}
+void Builder::SetTime(const ros::Time& stamp) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+
+  stamp_ = stamp;
+}
+void Builder::SetNamespace(const std::string& ns) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+  ns_ = ns;
+}
+void Builder::SetPose(const geometry_msgs::Pose& pose) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+  pose_ = pose;
+}
 void Builder::SetColor(float r, float g, float b, float a) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+
   color_.r = r;
   color_.g = g;
   color_.b = b;
@@ -114,6 +164,13 @@ void Builder::SetColor(float r, float g, float b, float a) {
 }
 
 void Builder::Build(MarkerArray* marker_array) {
+  if (!has_initialized_) {
+    ROS_ERROR(
+        "You must call Init() before calling any other methods of "
+        "robot_markers::Builder.");
+    return;
+  }
+
   const std::string& root_name = model_.getRoot()->name;
 
   tf_graph_.Add(NodeName(root_name), RefFrame(frame_id_), pose_);
