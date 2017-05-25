@@ -20,18 +20,18 @@ int main(int argc, char** argv) {
   robot_markers::Builder builder(model);
   builder.Init();
 
-  // Robot 1: Default configuration.
+  // Robot 1: Default configuration, purple.
   visualization_msgs::MarkerArray robot1;
   builder.SetNamespace("robot");
   builder.SetFrameId("base_link");
-  ros::Time now = ros::Time::now();
-  builder.SetTime(ros::Time::now());
+  builder.SetColor(0.33, 0.17, 0.45, 1);
   builder.Build(&robot1);
   marker_arr_pub.publish(robot1);
 
-  // Robot 2: Different pose and right arm panned slightly outward.
+  // Robot 2: Different pose, joints changed.
   visualization_msgs::MarkerArray robot2;
   builder.SetNamespace("robot2");
+  builder.SetColor(0, 0, 0, 0);
 
   std::map<std::string, double> joint_positions;
   joint_positions["torso_lift_joint"] = 0.1;
