@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Boost REQUIRED)
-find_package(Eigen3 REQUIRED)
+find_package(Eigen REQUIRED)
 find_package(orocos_kdl REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -49,7 +49,7 @@ catkin_package(
     std_msgs
     urdf
     visualization_msgs
-  DEPENDS Boost Eigen3 orocos_kdl
+  DEPENDS Boost Eigen orocos_kdl
 )
 
 ###########
@@ -61,7 +61,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   include
-  ${Eigen3_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
   ${orocos_kdl_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
