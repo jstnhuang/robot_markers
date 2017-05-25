@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Boost REQUIRED)
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 find_package(orocos_kdl REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -49,6 +49,7 @@ catkin_package(
     std_msgs
     urdf
     visualization_msgs
+  DEPENDS Boost Eigen3 orocos_kdl
 )
 
 ###########
@@ -60,7 +61,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   include
-  ${EIGEN_INCLUDE_DIRS}
+  ${Eigen3_INCLUDE_DIRS}
   ${orocos_kdl_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
@@ -105,6 +106,16 @@ target_link_libraries(robot_markers_demo
 
 ## Mark executables and/or libraries for installation
 install(TARGETS robot_markers_forward_kinematics
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(TARGETS robot_markers_builder
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+install(TARGETS robot_markers_demo
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
