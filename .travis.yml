@@ -28,6 +28,8 @@ install:
 - rosdep update
 - mkdir -p ~/catkin_ws/src
 - cd ..; mv robot_markers ~/catkin_ws/src
+- cd ~/catkin_ws/src
+- git clone https://github.com/jstnhuang/transform_graph.git
 - cd ~/catkin_ws
 - catkin init
 - rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
