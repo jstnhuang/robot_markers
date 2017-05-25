@@ -51,7 +51,11 @@ flags = [
 '-I',
 '../../devel/include',
 '-I',
-'include'
+'include',
+'-I',
+'/usr/include/eigen3/',
+'-I',
+'../transform_graph/include'
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
