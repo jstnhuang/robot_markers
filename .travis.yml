@@ -1,0 +1,38 @@
+sudo: required
+dist: trusty
+language: python
+python:
+- '2.7'
+virtualenv:
+  system_site_packages: true
+cache:
+  apt: true
+  pip: true
+before_install:
+- export ROS_DISTRO=indigo
+- export ROS_CI_DESKTOP=`lsb_release -cs`
+- export ROS_MASTER_URI=http://localhost:11311
+notifications:
+  email: false
+  slack:
+    secure: osfYiYVXgqP1RXHJFvOt79oOg1VE4S7b0Xx+nrzkpgZtROpqa4psYXPazOuAS5lUl9/2h3V8I2nkTaaAJXubI410X4YtNo1s4Lnb/ZCoJXDlSZEXI5WcuEptYVL+ZXQbZMgQGDFzII3ZTVz3i05p5MdIEzMi3APyY656PkUZamRIB/Q/BS+mcBjdUaS7w3OG0J3TFc0E1H7HKqrpi4Q42VhZBndqJBbmn0fU0xHj4UqAv42f0ib1roZHlCh1rt+loqJQ2qveQNlhGqLiW4LnylH4Img0jA0rMVIQ7/B98yYzKCGe8F9Z16lwJ+evUwBOOgaN5k1Zwc2R9FjuqTtqL4RrCNsQE3xZP+KeRS4tkS8mH0bhgy5Gat9VCp8sp2SoljN1vkoXoqmZZpcrbrm2A6fhLCb9R3iSwoHXbx4eexJ4ITdF13wp0JGX1tBmd4lpqQstDC0iHXsK90fxJr8C/Ak06TrjWNFa+GDFY9fllQdxrHLtQ9AsHlgnluGbQTsv0QPTt5YBekkQDmycLRcR4egx9wOImi+IqvEc9bV1yRR44SNDpsfy59vnbKn0JYIvUJFOi7YLBpzFOq2pFYYdPYg5k88BOKTPS7Pjyz1WjG0A9ggbsxGKrZ0mEEwhFS18dmukAqwTKtKs5wJtKiJqzHO6MDXdx29VeA26E5WLfqw=
+install:
+- sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main"
+  > /etc/apt/sources.list.d/ros-latest.list'
+- wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+- sudo apt-get update -qq
+- sudo apt-get install -qq -y python-catkin-pkg python-catkin-tools python-rosdep
+  python-wstool ros-$ROS_DISTRO-catkin ros-$ROS_DISTRO-ros ros-$ROS_DISTRO-rosdoc-lite
+- source /opt/ros/$ROS_DISTRO/setup.bash
+- sudo rosdep init
+- rosdep update
+- mkdir -p ~/catkin_ws/src
+- cd ..; mv robot_markers ~/catkin_ws/src
+- cd ~/catkin_ws
+- catkin init
+- rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -y
+script:
+- catkin build
+after_success:
+- cd ~/catkin_ws/src/robot_markers
+- rosdoc_lite .
