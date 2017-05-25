@@ -47,6 +47,7 @@ catkin_package(
     roscpp
     rospy
     std_msgs
+    transform_graph
     urdf
     visualization_msgs
   DEPENDS Boost Eigen orocos_kdl
