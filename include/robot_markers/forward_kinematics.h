@@ -49,7 +49,6 @@ class ForwardKinematics {
   urdf::Model model_;
   KDL::Tree tree_;
   std::map<std::string, SegmentPair> segments_;
-  std::map<std::string, SegmentPair> segments_fixed_;
 
   void AddChildren(const KDL::SegmentMap::const_iterator segment);
 };

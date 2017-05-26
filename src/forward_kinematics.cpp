@@ -17,7 +17,7 @@ SegmentPair::SegmentPair(const KDL::Segment& p_segment,
     : segment(p_segment), root(p_root), tip(p_tip) {}
 
 ForwardKinematics::ForwardKinematics(const urdf::Model& model)
-    : model_(model), tree_(), segments_(), segments_fixed_() {}
+    : model_(model), tree_(), segments_() {}
 
 void ForwardKinematics::Init() {
   kdl_parser::treeFromUrdfModel(model_, tree_);
@@ -70,12 +70,12 @@ void ForwardKinematics::AddChildren(
     SegmentPair s(GetTreeElementSegment(children[i]->second), root,
                   child.getName());
     if (child.getJoint().getType() == KDL::Joint::None) {
-      if (model_.getJoint(child.getJoint().getName()) &&
-          model_.getJoint(child.getJoint().getName())->type ==
-              urdf::Joint::FLOATING) {
-      } else {
-        segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
-      }
+      // if (model_.getJoint(child.getJoint().getName()) &&
+      //    model_.getJoint(child.getJoint().getName())->type ==
+      //        urdf::Joint::FLOATING) {
+      //} else {
+      //   segments_fixed_.insert(make_pair(child.getJoint().getName(), s));
+      //}
     } else {
       segments_.insert(make_pair(child.getJoint().getName(), s));
     }
