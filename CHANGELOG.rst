@@ -2,7 +2,7 @@
 Changelog for package robot_markers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.0 (2017-05-25)
+------------------
 * Initial package creation.
 * Contributors: Justin Huang
