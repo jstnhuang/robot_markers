@@ -6,6 +6,7 @@
 
   <maintainer email="jstn@cs.washington.edu">Justin Huang</maintainer>
   <license>BSD</license>
+  <url type="website">http://wiki.ros.org/robot_markers</url>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>cmake_modules</build_depend>
