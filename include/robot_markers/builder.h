@@ -151,8 +151,6 @@ class Builder {
   ForwardKinematics fk_;
   transform_graph::Graph tf_graph_;
 
-  std::map<std::string, double> joint_positions_;
-
   // Marker fields
   std::string frame_id_;
   ros::Time stamp_;
