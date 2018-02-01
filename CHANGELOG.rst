@@ -2,8 +2,8 @@
 Changelog for package robot_markers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2018-01-31)
+------------------
 * Added ability to filter markers to a set of links.
 * Added website.
 * Update README.md
