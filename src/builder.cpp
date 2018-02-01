@@ -1,6 +1,7 @@
 #include "robot_markers/builder.h"
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -164,6 +165,12 @@ void Builder::SetColor(float r, float g, float b, float a) {
 }
 
 void Builder::Build(MarkerArray* marker_array) {
+  std::set<std::string> link_names;
+  Build(link_names, marker_array);
+}
+
+void Builder::Build(const std::set<std::string>& link_names,
+                    MarkerArray* marker_array) {
   if (!has_initialized_) {
     ROS_ERROR(
         "You must call Init() before calling any other methods of "
@@ -180,6 +187,9 @@ void Builder::Build(MarkerArray* marker_array) {
   for (size_t i = 0; i < links.size(); ++i) {
     const urdf::LinkSharedPtr& link_p = links[i];
     const std::string& name = link_p->name;
+    if (link_names.find(name) == link_names.end()) {
+      continue;
+    }
 
     if (!link_p->visual) {
       continue;
