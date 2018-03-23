@@ -2,6 +2,7 @@
 #define _ROBOT_MARKERS_BUILDER_H_
 
 #include <map>
+#include <set>
 #include <string>
 
 #include "geometry_msgs/Pose.h"
@@ -60,6 +61,23 @@ namespace robot_markers {
 ///   builder.Build(&robot2);
 ///   marker_arr_pub.publish(robot2);
 /// \endcode
+///
+/// It is also possible to filter the markers to a subset of the links. For
+/// example, to just get the markers for the left gripper of a PR2:
+///
+/// \code
+///   std::set<std::string> gripper_links;
+///   gripper_links.insert("l_gripper_palm_link");
+///   gripper_links.insert("l_gripper_l_finger_link");
+///   gripper_links.insert("l_gripper_l_finger_tip_link");
+///   gripper_links.insert("l_gripper_r_finger_link");
+///   gripper_links.insert("l_gripper_r_finger_tip_link");
+///   builder.Build(gripper_links, &marker_array);
+/// \endcode
+///
+/// Note that the pose of the gripper will still be where it would have been if
+/// you had rendered the whole robot. If you want to move the gripper to an
+/// arbitrary pose, you will need to transform all the gripper markers yourself.
 class Builder {
  public:
   /// Construct a Builder with the given URDF model.
@@ -140,6 +158,17 @@ class Builder {
   ///
   /// \param[out] marker_array The marker array message to append to.
   void Build(visualization_msgs::MarkerArray* marker_array);
+
+  /// \brief Builds a subset of the robot model visualization as a marker array.
+  ///
+  /// It sets marker properties according to the Set* methods in the class.
+  /// You can build multiple sets of markers with the same builder, but you
+  /// should be mindful of the history of property settings made beforehand.
+  ///
+  /// \param[in] link_names The names of the links to visualize.
+  /// \param[out] marker_array The marker array message to append to.
+  void Build(const std::set<std::string>& link_names,
+             visualization_msgs::MarkerArray* marker_array);
 
  private:
   // Sets everything in the marker except the pose.
