@@ -187,7 +187,7 @@ void Builder::Build(const std::set<std::string>& link_names,
   for (size_t i = 0; i < links.size(); ++i) {
     const urdf::LinkSharedPtr& link_p = links[i];
     const std::string& name = link_p->name;
-    if (link_names.find(name) == link_names.end()) {
+    if (!link_names.empty() && link_names.find(name) == link_names.end()) {
       continue;
     }
 
@@ -206,7 +206,6 @@ void Builder::Build(const std::set<std::string>& link_names,
     if (!success) {
       ROS_ERROR("No transform from %s to %s!", frame_id_.c_str(), name.c_str());
       continue;
-    } else {
     }
     marker.pose = ToGeometryPose(transform_out);
     marker_array->markers.push_back(marker);
