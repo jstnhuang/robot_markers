@@ -2,8 +2,8 @@
 Changelog for package robot_markers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.1 (2018-06-01)
+------------------
 * Fixed builder when building the whole robot.
 * Contributors: Justin Huang
 
