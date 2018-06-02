@@ -2,6 +2,11 @@
 Changelog for package robot_markers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed builder when building the whole robot.
+* Contributors: Justin Huang
+
 0.2.0 (2018-01-31)
 ------------------
 * Added ability to filter markers to a set of links.
