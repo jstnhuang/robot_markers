@@ -148,7 +148,7 @@ class Builder {
   ///
   /// \param[in] frame_locked True to lock the markers to the robot's frame ID,
   ///   false otherwise.
-  void SetFrameLocked(bool frame_locked);
+  void SetFrameLocked(const bool frame_locked);
 
   /// \brief Builds a visualization of the robot model as a marker array.
   ///

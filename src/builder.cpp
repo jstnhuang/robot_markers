@@ -132,6 +132,16 @@ void Builder::SetColor(float r, float g, float b, float a) {
   color_.a = a;
 }
 
+void Builder::SetLifetime(const ros::Duration& lifetime) {
+  Check();
+  lifetime_ = lifetime;
+}
+
+void Builder::SetFrameLocked(const bool frame_locked) {
+  Check();
+  frame_locked_ = frame_locked;
+}
+
 void Builder::Build(MarkerArray* marker_array) {
   std::set<std::string> link_names;
   Build(link_names, marker_array);
