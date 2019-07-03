@@ -94,12 +94,7 @@ void Builder::Init() {
 
 void Builder::SetJointPositions(
     const std::map<std::string, double> joint_positions) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
 
   std::vector<geometry_msgs::TransformStamped> transforms;
   fk_.GetTransforms(joint_positions, &transforms);
@@ -113,50 +108,23 @@ void Builder::SetJointPositions(
 }
 
 void Builder::SetFrameId(const std::string& frame_id) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
-
+  Check();
   frame_id_ = frame_id;
 }
 void Builder::SetTime(const ros::Time& stamp) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
-
+  Check();
   stamp_ = stamp;
 }
 void Builder::SetNamespace(const std::string& ns) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
   ns_ = ns;
 }
 void Builder::SetPose(const geometry_msgs::Pose& pose) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
   pose_ = pose;
 }
 void Builder::SetColor(float r, float g, float b, float a) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
 
   color_.r = r;
   color_.g = g;
@@ -171,12 +139,7 @@ void Builder::Build(MarkerArray* marker_array) {
 
 void Builder::Build(const std::set<std::string>& link_names,
                     MarkerArray* marker_array) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
 
   const std::string& root_name = model_.getRoot()->name;
 
@@ -209,6 +172,12 @@ void Builder::Build(const std::set<std::string>& link_names,
     }
     marker.pose = ToGeometryPose(transform_out);
     marker_array->markers.push_back(marker);
+  }
+}
+
+void Builder::Check() {
+  if (!has_initialized_) {
+    throw std::runtime_error("You must call Init() before calling any other methods of robot_markers::Builder.");
   }
 }
 

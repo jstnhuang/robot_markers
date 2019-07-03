@@ -171,6 +171,7 @@ class Builder {
              visualization_msgs::MarkerArray* marker_array);
 
  private:
+  void Check();
   // Sets everything in the marker except the pose.
   void BuildMarker(const urdf::Link& link, int id,
                    visualization_msgs::Marker* output);
