@@ -66,6 +66,7 @@ Builder::Builder(const urdf::Model& model)
       color_(),
       lifetime_(0),
       frame_locked_(false),
+      mesh_materials_(true),
       has_initialized_(false) {
   pose_.orientation.w = 1;
 }
@@ -130,6 +131,8 @@ void Builder::SetColor(float r, float g, float b, float a) {
   color_.g = g;
   color_.b = b;
   color_.a = a;
+
+  mesh_materials_ = false;
 }
 
 void Builder::SetLifetime(const ros::Duration& lifetime) {
@@ -216,7 +219,7 @@ void Builder::BuildMarker(const urdf::Link& link, int id, Marker* output) {
   } else if (link.visual->geometry->type == urdf::Geometry::MESH) {
     output->type = Marker::MESH_RESOURCE;
     const urdf::Mesh& mesh = dynamic_cast<urdf::Mesh&>(*link.visual->geometry);
-    output->mesh_use_embedded_materials = true;
+    output->mesh_use_embedded_materials = mesh_materials_;
     if (mesh.scale.x == 0 && mesh.scale.y == 0 && mesh.scale.z == 0) {
       output->scale.x = 1;
       output->scale.y = 1;

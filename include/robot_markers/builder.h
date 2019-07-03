@@ -189,6 +189,7 @@ class Builder {
   std_msgs::ColorRGBA color_;
   ros::Duration lifetime_;
   bool frame_locked_;
+  bool mesh_materials_;
 
   bool has_initialized_;
 };
