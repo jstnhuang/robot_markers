@@ -135,6 +135,24 @@ void Builder::SetColor(float r, float g, float b, float a) {
   mesh_materials_ = false;
 }
 
+void Builder::SetLinkColors(std::unordered_map<std::string, std::array<float,4>> colors) {
+  Check();
+
+  for(const auto & [link, color] : colors) {
+      std_msgs::ColorRGBA c;
+      c.r = color[0];
+      c.g = color[1];
+      c.b = color[2];
+      c.a = color[3];
+      colors_[link] = c;
+  }
+
+  // set the default color to white
+  SetColor(1,1,1,1);
+
+  mesh_materials_ = false;
+}
+
 void Builder::SetLifetime(const ros::Duration& lifetime) {
   Check();
   lifetime_ = lifetime;
@@ -199,7 +217,7 @@ void Builder::BuildMarker(const urdf::Link& link, int id, Marker* output) {
   output->header.stamp = stamp_;
   output->ns = ns_;
   output->id = id;
-  output->color = color_;
+  output->color = colors_.count(link.name) ? colors_.at(link.name) : color_;
   output->lifetime = lifetime_;
   output->frame_locked = frame_locked_;
 
