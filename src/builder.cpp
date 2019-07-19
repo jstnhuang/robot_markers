@@ -66,6 +66,7 @@ Builder::Builder(const urdf::Model& model)
       color_(),
       lifetime_(0),
       frame_locked_(false),
+      mesh_materials_(true),
       has_initialized_(false) {
   pose_.orientation.w = 1;
 }
@@ -94,12 +95,7 @@ void Builder::Init() {
 
 void Builder::SetJointPositions(
     const std::map<std::string, double> joint_positions) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
 
   std::vector<geometry_msgs::TransformStamped> transforms;
   fk_.GetTransforms(joint_positions, &transforms);
@@ -113,55 +109,58 @@ void Builder::SetJointPositions(
 }
 
 void Builder::SetFrameId(const std::string& frame_id) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
-
+  Check();
   frame_id_ = frame_id;
 }
 void Builder::SetTime(const ros::Time& stamp) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
-
+  Check();
   stamp_ = stamp;
 }
 void Builder::SetNamespace(const std::string& ns) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
   ns_ = ns;
 }
 void Builder::SetPose(const geometry_msgs::Pose& pose) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
   pose_ = pose;
 }
 void Builder::SetColor(float r, float g, float b, float a) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
 
   color_.r = r;
   color_.g = g;
   color_.b = b;
   color_.a = a;
+
+  mesh_materials_ = false;
+}
+
+void Builder::SetLinkColors(std::unordered_map<std::string, std::array<float,4>> colors) {
+  Check();
+
+  for(const auto & [link, color] : colors) {
+      std_msgs::ColorRGBA c;
+      c.r = color[0];
+      c.g = color[1];
+      c.b = color[2];
+      c.a = color[3];
+      colors_[link] = c;
+  }
+
+  // set the default color to white
+  SetColor(1,1,1,1);
+
+  mesh_materials_ = false;
+}
+
+void Builder::SetLifetime(const ros::Duration& lifetime) {
+  Check();
+  lifetime_ = lifetime;
+}
+
+void Builder::SetFrameLocked(const bool frame_locked) {
+  Check();
+  frame_locked_ = frame_locked;
 }
 
 void Builder::Build(MarkerArray* marker_array) {
@@ -171,12 +170,7 @@ void Builder::Build(MarkerArray* marker_array) {
 
 void Builder::Build(const std::set<std::string>& link_names,
                     MarkerArray* marker_array) {
-  if (!has_initialized_) {
-    ROS_ERROR(
-        "You must call Init() before calling any other methods of "
-        "robot_markers::Builder.");
-    return;
-  }
+  Check();
 
   const std::string& root_name = model_.getRoot()->name;
 
@@ -212,12 +206,18 @@ void Builder::Build(const std::set<std::string>& link_names,
   }
 }
 
+void Builder::Check() {
+  if (!has_initialized_) {
+    throw std::runtime_error("You must call Init() before calling any other methods of robot_markers::Builder.");
+  }
+}
+
 void Builder::BuildMarker(const urdf::Link& link, int id, Marker* output) {
   output->header.frame_id = frame_id_;
   output->header.stamp = stamp_;
   output->ns = ns_;
   output->id = id;
-  output->color = color_;
+  output->color = colors_.count(link.name) ? colors_.at(link.name) : color_;
   output->lifetime = lifetime_;
   output->frame_locked = frame_locked_;
 
@@ -237,7 +237,7 @@ void Builder::BuildMarker(const urdf::Link& link, int id, Marker* output) {
   } else if (link.visual->geometry->type == urdf::Geometry::MESH) {
     output->type = Marker::MESH_RESOURCE;
     const urdf::Mesh& mesh = dynamic_cast<urdf::Mesh&>(*link.visual->geometry);
-    output->mesh_use_embedded_materials = true;
+    output->mesh_use_embedded_materials = mesh_materials_;
     if (mesh.scale.x == 0 && mesh.scale.y == 0 && mesh.scale.z == 0) {
       output->scale.x = 1;
       output->scale.y = 1;

@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 #include "geometry_msgs/Pose.h"
 #include "ros/duration.h"
@@ -137,6 +138,10 @@ class Builder {
   /// \param[in] a The alpha value, between 0 and 1.
   void SetColor(float r, float g, float b, float a);
 
+  /// \brief Set link-specific color
+  /// \param[in] colors color tuple (r,g,b,a) per link
+  void SetLinkColors(std::unordered_map<std::string, std::array<float, 4> > colors);
+
   /// \brief Sets the lifetime of the robot markers.
   ///
   /// \param[in] lifetime The lifetime for the robot markers.
@@ -148,7 +153,7 @@ class Builder {
   ///
   /// \param[in] frame_locked True to lock the markers to the robot's frame ID,
   ///   false otherwise.
-  void SetFrameLocked(bool frame_locked);
+  void SetFrameLocked(const bool frame_locked);
 
   /// \brief Builds a visualization of the robot model as a marker array.
   ///
@@ -171,6 +176,7 @@ class Builder {
              visualization_msgs::MarkerArray* marker_array);
 
  private:
+  void Check();
   // Sets everything in the marker except the pose.
   void BuildMarker(const urdf::Link& link, int id,
                    visualization_msgs::Marker* output);
@@ -186,8 +192,10 @@ class Builder {
   std::string ns_;
   geometry_msgs::Pose pose_;
   std_msgs::ColorRGBA color_;
+  std::unordered_map<std::string, std_msgs::ColorRGBA> colors_;
   ros::Duration lifetime_;
   bool frame_locked_;
+  bool mesh_materials_;
 
   bool has_initialized_;
 };
